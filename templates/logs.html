@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../static/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+      integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
+      crossorigin="anonymous"
+    />
+    <title>Diary</title>
+  </head>
+  <body>
+    <nav id="navbar" class="">
+      <div class="nav-wrapper">
+        <div class="logo-nav">
+          <a href="/index"
+            ><i class="fas fa-book-open"></i></a
+          >
+        </div>
+        <ul id="menu">
+          <li><a href="/index">Home</a></li>
+          <li><a href="/profile">Profile</a></li>
+          <li><a href="/friends">Friends</a></li>
+          <li><a href="/logs">Logs</a></li>
+          <li><a href="/logOut">Log out</a></li>
+          <li><a> Hi {{ user }} </li></li>
+        </ul>
+      </div>
+    </nav>
+    {% with messages = get_flashed_messages() %} {% if messages %}
+    <ul class="flashes">
+      {% for message in messages %}
+      <p class="message">{{ message }}</p>
+      {% endfor %}
+    </ul>
+    {% endif %} {% endwith %}
+    <div class="main-container">
+      <div class="diary-container">
+        {% for log in userLogs %}
+        <div class="info-box">
+          <div class="info-box__header">
+            <figure class="info-box__subheader-figure">
+              <img
+                class="info-box__subheader-img"
+                src="https://image.flaticon.com/icons/png/512/3066/3066171.png"
+                alt="club-image"
+              />
+            </figure>
+            <h2 class="info-box__title">{{ log.name }}</h2>
+          </div>
+
+          <p class="info-box__about">
+            <b
+              ><span class="info-box__subheader-box-text"
+                >{{ log.date }} <br /><br />
+                {{ log.log }}
+              </span></b
+            >
+          </p>
+          <b>
+            <div class="info-box__footer">
+              <form action="/updateDiaryLogPage" method="POST">
+                <input name="id" value="{{log.id}}" hidden />
+                <input type="submit" value="Update" class="btn-log" />
+              </form>
+            </div>
+          </b>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="container">
+      <form action="/newDiaryLogPage">
+        <input type="submit" value="New log" class="btn-log" />
+      </form>
+    </div>
+  </body>
+</html>

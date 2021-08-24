@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../static/style.css" />
+    <title>Register</title>
+  </head>
+  <body>
+    <nav id="navbar" class="">
+      <div class="nav-wrapper">
+        <!-- Navbar Logo -->
+        <div class="logo-nav">
+          <!-- Logo Placeholder for Inlustration -->
+          <a href="/index"><i class="fas fa-book-open"></i></a>
+        </div>
+
+        <!-- Navbar Links -->
+        <ul id="menu">
+          <li><a href="/login">Login</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages() %} {% if messages %}
+        <ul class="flashes">
+          {% for message in messages %}
+          <p id="message" class="message">{{ message }}</p>
+          {% endfor %}
+        </ul>
+        {% endif %} {% endwith %}
+        <form id="registerForm" action="/register" method="POST">
+          <input
+            id="username"
+            type="text"
+            name="username"
+            placeholder="Please enter you username"
+          />
+          <input
+            id="password"
+            type="password"
+            name="password"
+            placeholder="Please enter your password"          
+          />
+          <input
+            type="number"
+            name="age"
+            placeholder="Please enter your age"            
+          />
+          <input
+            type="text"
+            name="sex"
+            placeholder="Please enter your sex"            
+          />
+          <input
+            type="text"
+            name="country"
+            placeholder="Please enter your country"            
+          />
+          <input
+            type="text"
+            name="city"
+            placeholder="Please enter your city"            
+          />
+      <input type="submit" value="Register" class="btn" />
+    </form>
+  </body>
+</html>

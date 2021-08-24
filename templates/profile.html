@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../static/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+      integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
+      crossorigin="anonymous"
+    />
+    <title>Diary</title>
+  </head>
+  <body>
+    <nav id="navbar" class="">
+      <div class="nav-wrapper">
+        <!-- Navbar Logo -->
+        <div class="logo-nav">
+          <!-- Logo Placeholder for Inlustration -->
+          <a href="/index"><i class="fas fa-book-open"></i></a>
+        </div>
+
+        <!-- Navbar Links -->
+        <ul id="menu">
+          <li><a href="/index">Home</a></li>
+          <li><a href="/profile">Profile</a></li>
+          <li><a href="/friends">Friends</a></li>
+          <li><a href="/logs">Logs</a></li>
+          <li><a href="/logOut">Log out</a></li>
+          <li><a> Hi {{ user.username }} </li></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container">
+      <img src="../static/profile.png" alt="diary-image" class="logo" />
+      {% with messages = get_flashed_messages() %} {% if messages %}
+      <ul class="flashes">
+        {% for message in messages %}
+        <p class="message">{{ message }}</p>
+        {% endfor %}
+      </ul>
+      {% endif %} {% endwith %}
+      <form action="/updateUser" method="POST">
+        {% if user %}
+        <label>Username</label><br />
+        <input type="text" name="username" value="{{ user.username }}" />
+        <label>Password</label><br />
+        <input type="text" name="password" value="{{ user.password }}" />
+        <label>Age</label><br />
+        <input type="number" name="age" value="{{ user.age }}" />
+        <label>Sex</label><br />
+        <input type="text" name="sex" value="{{ user.sex }}" />
+        <label>Country</label><br />
+        <input type="text" name="country" value="{{ user.country }}" />
+        <label>City</label><br />
+        <input type="text" name="city" value="{{ user.city }}" />
+        {% endif %}
+        <input type="submit" value="Update" class="btn" />
+      </form>
+    </div>
+  </body>
+</html>

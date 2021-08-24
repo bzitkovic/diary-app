@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../static/style.css" />       
+    <title>Login</title>
+  </head>
+  <body>
+    <div class="container">
+      <h2>WELCOME friend </br> To the most wonderful little diary!</h2>
+      {% with messages = get_flashed_messages() %} {% if messages %}
+      <ul class="flashes">
+        {% for message in messages %}
+        <p id="message" class="message">{{ message }}</p>
+        {% endfor %}
+      </ul>
+      {% endif %} {% endwith %}
+      <form id="loginForm"  action="/login" method="POST">
+        <input
+          id="username"
+          type="text"
+          name="username"
+          placeholder="Please enter you username"
+        />
+        <input
+          id="password"
+          type="text"
+          name="password"
+          placeholder="Please enter your password"        
+        />
+        
+        <input type="submit" value="Login" class="btn"/>
+      </form>
+      <form action="/registerPage" method="POST">
+        <input type="submit" value="Register" class="btn" />
+      </form>
+    </div>
+  </body>
+</html>
+

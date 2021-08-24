@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../static/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+      integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
+      crossorigin="anonymous"
+    />
+    <title>Diary</title>
+  </head>
+  <body>
+    <nav id="navbar" class="">
+      <div class="nav-wrapper">
+        <div class="logo-nav">
+          <a href="/index"><i class="fas fa-book-open"></i></a>
+        </div>
+        <ul id="menu">
+          <li><a href="/index">Home</a></li>
+          <li><a href="/profile">Profile</a></li>
+          <li><a href="/friends">Friends</a></li>
+          <li><a href="/logs">Logs</a></li>
+          <li><a href="/logOut">Log out</a></li>
+          <li><a> Hi {{ user }} </li></li>
+        </ul>
+      </div>
+    </nav>
+    <div class="main-container">
+      {% with messages = get_flashed_messages() %} {% if messages %}
+      <ul class="flashes">
+        {% for message in messages %}
+        <p class="message">{{ message }}</p>
+        {% endfor %}
+      </ul>
+      {% endif %} {% endwith %}
+    </div>
+    <div class="friends-container">
+      <div class="friends-column">
+        <strong><p>Friends</p></strong>
+        {% for friend in friends %}
+        <div id="friends">
+          <div class="friend">
+            <img
+              src="../static/profile.png"
+            />
+            <p>
+              <strong>{{ friend.username }} </strong>
+              <br />
+              <span>Age: {{ friend.age }} </span>
+              <br />
+              <span>Sex: {{ friend.sex }} </span>
+              <br />
+              <span>Country: {{ friend.country }} </span>
+              <br />
+              <span>City: {{ friend.city }} </span>
+            </p>
+            <form action="/unfriend" method="POST">
+              <input name="id" value="{{ friend.id }}" hidden />
+              <input type="submit" value="Unfriend" class="btn-friend" />
+            </form>
+            <div class="status available"></div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="friends-column">
+        <strong><p>Pending friends</p></strong>
+        {% for pendingFriend in pendingFriends %}
+        <div id="friends">
+          <div class="friend">
+            <img
+              src="../static/profile.png"            />
+            <p>
+              <strong>{{ pendingFriend.username }} </strong>
+              <br />
+              <span>Age: {{ pendingFriend.age }} </span>
+              <br />
+              <span>Sex: {{ pendingFriend.sex }} </span>
+              <br />
+              <span>Country: {{ pendingFriend.country }} </span>
+              <br />
+              <span>City: {{ pendingFriend.city }} </span>
+            </p>
+            <form action="/confirmFriend" method="POST">
+              <input name="id" value="{{ pendingFriend.id }}" hidden />
+              <input type="submit" value="Accept" class="btn-friend" />
+            </form>
+            <div class="status pending">              
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="friends-column">
+        <strong><p>People in the app</p></strong>
+        {% for noFriend in notFriends %}
+        <div id="friends">
+          <div class="friend">
+            <img
+              src="../static/profile.png"            />
+            <p>
+              <strong>{{ noFriend.username }} </strong>
+              <br />
+              <span>Age: {{ noFriend.age }} </span>
+              <br />
+              <span>Sex: {{ noFriend.sex }} </span>
+              <br />
+              <span>Country: {{ noFriend.country }} </span>
+              <br />
+              <span>City: {{ noFriend.city }} </span>
+            </p>
+            <form action="/addFriend" method="POST">
+              <input name="id" value="{{ noFriend.id }}" hidden />
+              <input type="submit" value="Add" class="btn-friend" />
+            </form>
+            <div class="status inactive">              
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </body>
+</html>
