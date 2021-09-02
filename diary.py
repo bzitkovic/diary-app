@@ -2,40 +2,35 @@ from flask import render_template, request, redirect, url_for, flash
 from sqlalchemy import and_, not_
 from models import User, DiaryLog, Friendship
 from globalSettings import *
+from forms import *
 
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    if(request.method == 'POST'):
-        username = request.form['username']
-        password = request.form['password']
+    form = LoginForm()
 
-        if(username == '' and password == ''):
-            flash('Please enter required fields!')
-
-            return render_template('login.html')
- 
+    if(request.method == 'POST' and form.validate_on_submit()):
         DBUser = session.query(User).\
-            filter_by(username=username).first()     
+            filter(User.username==form.username.data).first()    
 
         if(DBUser != None):
-            if(username == DBUser.username and password == DBUser.password):
+            if(form.username.data == DBUser.username and form.password.data == DBUser.password):
                 global LOGIN 
                 global USER 
                 LOGIN = True                
-                USER = DBUser
-                
+                USER = DBUser 
+
                 return redirect(url_for('index'))
             else:
                 flash('Wrong login credentials')
-
-                return render_template('login.html')
+                
+                return render_template('login.html', form=form)
         else:   
             flash('Wrong login credentials')
 
-            return render_template('login.html')
-    else:
-        return render_template('login.html')
+            return render_template('login.html', form=form)
+
+    return render_template('login.html', form=form)
 
 @app.route('/logOut')
 def logOut():
@@ -44,35 +39,33 @@ def logOut():
     LOGIN = False
     USER = None
 
+    session.close()
+
     return redirect(url_for('login'))
 
-@app.route('/registerPage', methods=['POST'])
-def redirectRegister():
-    return  render_template('register.html')
-
-@app.route('/register', methods=['POST'])
+@app.route('/register', methods=['POST', 'GET'])
 def register():
-    if(request.method == 'POST'):
-        username = request.form['username']
-        password = request.form['password']
-        age = request.form['age']
-        sex = request.form['sex']
-        country = request.form['country']
-        city = request.form['city']        
+    form = RegisterForm()
 
-        if(username == '' or password == ''):
-            flash('Please enter required fields')
-
-            return render_template('register.html')
-
-        user = User(username, password, age, sex, country, city)
-
+    if(request.method == 'POST' and form.validate_on_submit()):
+        user = User(form.username.data,\
+            form.password.data,\
+            form.age.data,\
+            form.sex.data,\
+            form.country.data,\
+            form.city.data)
         session.add(user)
         session.commit()
 
         flash('You have successfully been registered!')
 
-        return render_template('login.html')
+        return redirect(url_for('login'))
+
+    if(form.errors != {}): 
+        for err_msg in form.errors.values():
+            flash(f'There was an error with creating a user: {err_msg[0]}')
+
+    return render_template('register.html', form=form)
 
 @app.route('/')
 @app.route('/index')
@@ -103,77 +96,64 @@ def index():
         friends=userFriends,\
         user=USER.username)
 
-@app.route('/profile')
+@app.route('/profile', methods=['POST', 'GET'])
 def profile():
-    logedUser = session.query(User).\
-        filter_by(username=USER.username).first()  
-    
-    return render_template('profile.html', user=logedUser)
+    loggedUser = session.query(User).\
+        filter(User.username==USER.username).first()  
 
+    form = ProfileForm(obj=loggedUser)
 
-@app.route('/updateUser', methods=['POST'])
-def updateUser():      
-    username = request.form['username']
-    password = request.form['password']
-    age = request.form['age']
-    sex = request.form['sex']
-    country = request.form['country']
-    city = request.form['city']
-
-    session.query(User).filter(User.id == USER.id).\
-        update({"username": username,\
-        "password": password,\
-        "age": age,\
-        "sex": sex,\
-        "country": country,\
-        "city": city},\
+    if(request.method == 'POST' and form.validate_on_submit()):
+        session.query(User).filter(User.id==USER.id).\
+        update({"username": form.username.data,\
+        "password": form.password.data,\
+        "age": form.age.data,\
+        "sex": form.sex.data,\
+        "country": form.country.data,\
+        "city": form.city.data},\
         synchronize_session="fetch")
-    session.commit()
+        session.commit()
 
-    flash('User updated!')
+        flash('User updated!')
 
-    return redirect(url_for('profile'))
+        return redirect(url_for('profile'))
+
+    if(form.errors != {}): 
+        for err_msg in form.errors.values():
+            flash(f'There was an error with creating a user: {err_msg[0]}')
+
+    return render_template('profile.html', user=loggedUser, form=form)
 
 
-@app.route('/updateDiaryLogPage', methods=['POST'])
-def updateDiaryLogPage():
-    id = request.form['id']
-   
+@app.route('/updateDiaryLogPage/<id>', methods=['POST', 'GET'])
+def updateDiaryLogPage(id):
     currentDiaryLog = session.query(DiaryLog).\
-        filter_by(id=id).first()
+        filter(DiaryLog.id==id).first()
+
+    form = DiaryLogForm(obj=currentDiaryLog)
+
+    if(request.method == 'POST' and form.validate_on_submit()):
+        session.query(DiaryLog).\
+                filter(DiaryLog.id == id).\
+                update({"name": form.name.data,\
+                "date": form.date.data,\
+                "log": form.log.data,\
+                "visible": form.visible.data},\
+                synchronize_session="fetch")                
+        session.commit()
+
+        flash('Diary log updated!')
+
+        return redirect(url_for('logs'))
+
+    if(form.errors != {}): 
+        for err_msg in form.errors.values():
+            flash(f'There was an error with diary log update: {err_msg[0]}')
 
     return render_template('updateDiaryLog.html',\
         currentDiaryLog=currentDiaryLog,\
-        user=USER.username)
-
-@app.route('/updateDiaryLog', methods=['POST'])
-def updateDiaryLog():
-    if(request.method == 'POST'):
-        id = request.form['id']
-        name = request.form['name']
-        date = request.form['date']
-        log = request.form['log']
-        visible = request.form['visible']
-
-        if(name == '' or date == '' or log == ''):
-            flash('Please enter required fields')
-
-            return render_template('updateDiaryLog.html')
-        else:
-            session.query(DiaryLog).\
-                filter(DiaryLog.id == id).\
-                update({"name": name,\
-                "date": date,\
-                "log": log,\
-                "visible": visible},\
-                synchronize_session="fetch")
-                
-            session.commit()
-
-            flash('Diary log updated!')
-
-            return redirect(url_for('logs'))
-
+        user=USER.username,\
+        form=form)
 
 @app.route('/logs')
 def logs():        
@@ -185,37 +165,38 @@ def logs():
         userLogs=userLogs,\
         user=USER.username)
 
-@app.route('/newDiaryLogPage')
+@app.route('/newDiaryLogPage', methods=['POST', 'GET'])
 def newDiaryLogPage():
-    return render_template('newDiaryLog.html', user=USER.username)
+    form = DiaryLogForm()
 
-@app.route('/newDiaryLog', methods=['POST'])
-def newDiaryLog():
-    global USER
-    if(request.method == 'POST'):
-        name = request.form['name']
-        date = request.form['date']
-        log = request.form['log']
-        visible = request.form['visible']
-
-        if(name == '' or date == '' or log == ''):
-            flash('Please enter required fields')
-
-            return render_template('newDiaryLog.html')
-        
-        if(len(log) > 300):
-            flash('The diary log can have maximum 300 characters!')
-
-            return render_template('newDiaryLog.html')
-
-        diaryLog = DiaryLog(name, date, log, visible, USER.id)
+    if(request.method == 'POST' and form.validate_on_submit()):
+        diaryLog = DiaryLog(form.name.data, form.date.data, form.log.data, form.visible.data, USER.id)
 
         session.add(diaryLog)
         session.commit()
 
         flash('You have successfully created new log!')
 
-        return render_template('logs.html')
+        return redirect(url_for('logs'))
+
+    if(form.errors != {}): 
+        for err_msg in form.errors.values():
+            flash(f'There was an error with creating a diary log: {err_msg[0]}')
+
+
+    return render_template('newDiaryLog.html', user=USER.username, form=form)
+
+@app.route('/deleteDiaryLog/<id>')
+def deleteDiaryLog(id):
+    session.query(DiaryLog).\
+        filter(DiaryLog.id==id).\
+        delete(synchronize_session="fetch")
+    session.commit()
+
+    flash('You have successfully deleted diary log!')
+
+    return redirect(url_for('logs'))
+
 
 @app.route('/friends')
 def friends():
@@ -316,3 +297,4 @@ def confirmFriend():
 
 if __name__ == '__main__':
     app.run()
+    csrf.init_app(app)

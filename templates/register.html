@@ -31,40 +31,32 @@
           {% endfor %}
         </ul>
         {% endif %} {% endwith %}
-        <form id="registerForm" action="/register" method="POST">
-          <input
-            id="username"
-            type="text"
-            name="username"
-            placeholder="Please enter you username"
-          />
-          <input
-            id="password"
-            type="password"
-            name="password"
-            placeholder="Please enter your password"          
-          />
-          <input
-            type="number"
-            name="age"
-            placeholder="Please enter your age"            
-          />
-          <input
-            type="text"
-            name="sex"
-            placeholder="Please enter your sex"            
-          />
-          <input
-            type="text"
-            name="country"
-            placeholder="Please enter your country"            
-          />
-          <input
-            type="text"
-            name="city"
-            placeholder="Please enter your city"            
-          />
-      <input type="submit" value="Register" class="btn" />
-    </form>
+
+        {% block content %}    
+        <form method="POST">
+          {{ form.csrf_token }}
+
+          {{ form.username.label() }}
+          {{ form.username }}
+
+          {{ form.password.label() }}
+          {{ form.password }}
+
+          {{ form.age.label() }}
+          {{ form.age }}
+
+          {{ form.sex.label() }}
+          {{ form.sex }}
+
+          {{ form.country.label() }}
+          {{ form.country }}
+
+          {{ form.city.label() }}
+          {{ form.city }}
+
+          {{ form.submit(class="btn") }}
+        </form>
+
+        {% endblock %}
   </body>
 </html>

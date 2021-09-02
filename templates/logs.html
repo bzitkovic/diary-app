@@ -31,13 +31,16 @@
         </ul>
       </div>
     </nav>
-    {% with messages = get_flashed_messages() %} {% if messages %}
-    <ul class="flashes">
-      {% for message in messages %}
-      <p class="message">{{ message }}</p>
-      {% endfor %}
-    </ul>
-    {% endif %} {% endwith %}
+    <div>
+      {% with messages = get_flashed_messages() %} {% if messages %}
+      <ul class="flashes">
+        {% for message in messages %}
+        <p class="message">{{ message }}</p>
+        {% endfor %}
+      </ul>
+      {% endif %} {% endwith %}
+    </div>
+
     <div class="main-container">
       <div class="diary-container">
         {% for log in userLogs %}
@@ -63,10 +66,8 @@
           </p>
           <b>
             <div class="info-box__footer">
-              <form action="/updateDiaryLogPage" method="POST">
-                <input name="id" value="{{log.id}}" hidden />
-                <input type="submit" value="Update" class="btn-log" />
-              </form>
+              <button onclick="location.href='/updateDiaryLogPage/{{ log.id }}'" class="btn" type="button">Update</button>
+              <button onclick="location.href='/deleteDiaryLog/{{ log.id }}'" class="btn" type="button">Delete</button>
             </div>
           </b>
         </div>

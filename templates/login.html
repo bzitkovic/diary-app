@@ -17,25 +17,21 @@
         {% endfor %}
       </ul>
       {% endif %} {% endwith %}
-      <form id="loginForm"  action="/login" method="POST">
-        <input
-          id="username"
-          type="text"
-          name="username"
-          placeholder="Please enter you username"
-        />
-        <input
-          id="password"
-          type="text"
-          name="password"
-          placeholder="Please enter your password"        
-        />
-        
-        <input type="submit" value="Login" class="btn"/>
-      </form>
-      <form action="/registerPage" method="POST">
-        <input type="submit" value="Register" class="btn" />
-      </form>
+
+     <form method="POST">
+      {{ form.csrf_token }}
+
+      {{ form.username.label() }}
+      {{ form.username }}
+
+      {{ form.password.label() }}
+      {{ form.password }}
+
+      {{ form.submit(class="btn") }}
+     </form>
+
+     <a href="/register"><button class="btn">Register</button></a>
+
     </div>
   </body>
 </html>

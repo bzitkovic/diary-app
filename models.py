@@ -15,8 +15,7 @@ class User(Base):
     country = Column('country', String)
     city = Column('city', String)
   
-    def __init__(self, id, username, password, age, sex, country, city):
-        self.id = id
+    def __init__(self, username, password, age, sex, country, city):
         self.username = username
         self.password = password
         self.age = age

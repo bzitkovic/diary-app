@@ -42,35 +42,26 @@
           {% endfor %}
         </ul>
         {% endif %} {% endwith %}
-        <form action="/newDiaryLog" method="POST">
-          <h3>Diary log name</h3>
-          <input
-            type="text"
-            name="name"
-            placeholder="Please enter you diary log name"
-          />
-          <br>
-          <h3>Diary log date</h3>
-          <input
-            type="date"
-            name="date"
-            placeholder="Please enter date"          
-          />
-          <div class="form-group">
-            <h3>Enter you daily thoughts!</h3>
-            <textarea
-              name="log"
-              cols="30"
-              rows="10"
-              placeholder="Write about your day :)"
-            ></textarea>
-          </div>
-          <div class="form-group">
-            <h3>Do you want this log to be visible?</h3>
-            <input type="radio" name="visible" value="1" checked/> Yes
-            <input type="radio" name="visible" value="0" /> No
-          </div>
-      <input type="submit" value="Submit" class="btn" />
-    </form>
+        
+        <form method="POST">
+            {{ form.csrf_token }}
+
+            <h3>{{ form.name.label() }}</h3>
+            {{ form.name }}
+          
+            <h3>{{ form.date.label() }}</h3>
+            {{ form.date }}
+
+            <h3>{{ form.log.label() }}</h3>
+            {{ form.log }}
+
+            <div class="form-group">
+              <h3>{{ form.visible.label() }}</h3>
+              {{ form.visible}}
+            </div>
+            
+
+            {{ form.submit(class="btn") }}
+      </form>
   </body>
 </html>
